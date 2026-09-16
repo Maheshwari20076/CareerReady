@@ -1,0 +1,56 @@
+{% extends "admin/_layout.html" %}
+{% set active_page = 'career_skills' %}
+{% set page_title = 'Career Skill Mapping' %}
+{% block content %}
+
+<div class="row g-3">
+  <div class="col-lg-8">
+    <div class="card p-3">
+      {% if mappings %}
+      <table class="table align-middle">
+        <thead><tr><th>Career</th><th>Skill</th><th>Actions</th></tr></thead>
+        <tbody>
+          {% for m in mappings %}
+          <tr>
+            <td>{{ m.career.name }}</td>
+            <td>{{ m.skill.name }}</td>
+            <td>
+              <form method="POST" action="{{ url_for('admin.delete_career_skill', mapping_id=m.id) }}" onsubmit="return confirmDelete('Remove this mapping?');">
+                <button class="btn btn-sm btn-outline-danger">Remove</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p class="text-muted mb-0 p-3">No career-skill mappings yet.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card p-4">
+      <h6 class="mb-3">Map a Skill to a Career</h6>
+      <form method="POST">
+        <div class="mb-3">
+          <label class="form-label">Career</label>
+          <select name="career_id" class="form-select" required>
+            <option value="" disabled selected>Select career</option>
+            {% for c in careers %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Skill</label>
+          <select name="skill_id" class="form-select" required>
+            <option value="" disabled selected>Select skill</option>
+            {% for s in skills %}<option value="{{ s.id }}">{{ s.name }}</option>{% endfor %}
+          </select>
+        </div>
+        <button type="submit" class="btn btn-cr-primary w-100">Add Mapping</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

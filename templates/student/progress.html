@@ -1,0 +1,21 @@
+{% extends "student/_layout.html" %}
+{% set active_page = 'progress' %}
+{% set page_title = 'My Progress' %}
+{% block content %}
+{% if not career %}
+<div class="card empty-state"><div class="empty-icon"><i class="bi bi-graph-up-arrow"></i></div><h6 class="fw-bold">Your progress starts with a career goal</h6><p class="small mb-3">Select a career to start tracking your readiness.</p><a href="{{ url_for('student.careers') }}" class="btn btn-cr-primary">Choose a Career</a></div>
+{% else %}
+<div class="page-intro"><h4>Your progress at a glance</h4><p>Track your current readiness, skill completion and interview performance.</p></div>
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-label">Career readiness</div><div class="stat-value">{{ gap.readiness_percent }}%</div><span class="readiness-level-badge level-{{ gap.readiness_level.replace(' ', '.') }} mt-2">{{ gap.readiness_level }}</span></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-label">Skills completed</div><div class="stat-value">{{ gap.total_matched }}/{{ gap.total_required }}</div></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-label">Resources available</div><div class="stat-value">{{ resources_explored }}</div></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-label">Avg interview score</div><div class="stat-value">{{ avg_score }}%</div></div></div>
+</div>
+<div class="row g-4 mb-4">
+  <div class="col-lg-7"><div class="card p-4 h-100"><div class="d-flex justify-content-between mb-3"><div><h6 class="section-title mb-1">Readiness snapshot</h6><div class="section-subtitle">Your current progress for {{ career.name }}.</div></div><div class="readiness-ring" style="--readiness: {{ gap.readiness_percent }};width:88px;height:88px;"><div class="readiness-ring-content"><strong style="font-size:1.2rem;">{{ gap.readiness_percent }}%</strong></div></div></div><div class="progress mb-2"><div class="progress-bar bg-cr" style="width:{{ gap.readiness_percent }}%"></div></div><div class="small text-muted">{{ gap.total_matched }} of {{ gap.total_required }} required skills matched.</div></div></div>
+  <div class="col-lg-5"><div class="card p-4 h-100"><h6 class="section-title">Skills status</h6>{% for skill in gap.required %}<div class="skill-row"><div class="skill-row-head"><span>{{ skill.name }}</span>{% if skill in gap.matched %}<span class="text-success">Matched</span>{% else %}<span class="text-danger">Missing</span>{% endif %}</div><div class="progress"><div class="progress-bar {{ 'bg-cr' if skill in gap.matched else '' }}" style="width:{{ '100' if skill in gap.matched else '20' }}%;{{ 'background:#fca5a5;' if skill not in gap.matched else '' }}"></div></div></div>{% endfor %}</div></div>
+</div>
+<div class="card p-4"><div class="d-flex justify-content-between align-items-center mb-3"><div><h6 class="section-title mb-1">Interview attempts</h6><div class="section-subtitle">Your recent practice results.</div></div><a href="{{ url_for('interview.interview') }}" class="btn btn-soft btn-sm">Practice again</a></div>{% if not attempts %}<div class="empty-state p-4"><div class="empty-icon"><i class="bi bi-chat-square-text"></i></div><div class="fw-semibold">No interview attempts yet</div><div class="small">Complete an interview question to start tracking your score.</div></div>{% else %}<div class="table-responsive"><table class="table align-middle"><thead><tr><th>Question</th><th>Score</th><th>Date</th></tr></thead><tbody>{% for a in attempts %}<tr><td class="fw-semibold">{{ a.question.question }}</td><td><span class="badge rounded-pill text-bg-{{ 'success' if a.score >= 60 else 'warning' }} px-3">{{ a.score }}%</span></td><td class="text-muted small">{{ a.created_at.strftime('%d %b %Y') }}</td></tr>{% endfor %}</tbody></table></div>{% endif %}</div>
+{% endif %}
+{% endblock %}

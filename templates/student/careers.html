@@ -1,0 +1,9 @@
+{% extends "student/_layout.html" %}
+{% set active_page = 'careers' %}
+{% set page_title = 'My Career' %}
+{% block content %}
+<div class="page-intro"><h4>Choose your target career</h4><p>Pick a role to see the skills you need and measure your readiness.</p></div>
+{% if not careers %}<div class="card empty-state"><div class="empty-icon"><i class="bi bi-briefcase"></i></div><div class="fw-semibold">No careers have been added yet.</div><div class="small">Please check back soon.</div></div>{% else %}
+<div class="row g-4">{% for career in careers %}<div class="col-md-6 col-xl-4"><div class="career-card {{ 'selected' if current_career_id == career.id }}"><div class="d-flex justify-content-between align-items-start mb-3"><div class="career-icon"><i class="bi bi-briefcase"></i></div>{% if current_career_id == career.id %}<span class="badge text-bg-success rounded-pill">Current goal</span>{% endif %}</div><h5 class="fw-bold">{{ career.name }}</h5><p class="text-muted small">{{ career.description or 'Build your skills for this career path.' }}</p><div class="small text-muted mb-3"><i class="bi bi-list-check me-1"></i>{{ career.career_skills|length }} required skill{{ 's' if career.career_skills|length != 1 }}</div>{% if current_career_id == career.id %}<button class="btn btn-success w-100" disabled><i class="bi bi-check-circle me-1"></i> Selected</button>{% else %}<form method="POST" action="{{ url_for('student.select_career', career_id=career.id) }}"><button type="submit" class="btn btn-cr-primary w-100">Select Career <i class="bi bi-arrow-right ms-1"></i></button></form>{% endif %}</div></div>{% endfor %}</div>
+{% endif %}
+{% endblock %}

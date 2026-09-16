@@ -1,0 +1,79 @@
+{% extends "admin/_layout.html" %}
+{% set active_page = 'interview_questions' %}
+{% set page_title = 'Interview Questions' %}
+{% block content %}
+
+<div class="row g-3">
+  <div class="col-lg-8">
+    <div class="card p-3">
+      {% if questions %}
+      <table class="table align-middle">
+        <thead><tr><th>Career</th><th>Question</th><th>Expected Keywords</th><th>Actions</th></tr></thead>
+        <tbody>
+          {% for q in questions %}
+          <tr>
+            <td>{{ q.career.name }}</td>
+            <td>{{ q.question }}</td>
+            <td class="text-muted small">{{ q.expected_keywords }}</td>
+            <td>
+              <button class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editQ{{ q.id }}">Edit</button>
+              <form method="POST" action="{{ url_for('admin.delete_interview_question', question_id=q.id) }}" class="d-inline" onsubmit="return confirmDelete('Delete this question?');">
+                <button class="btn btn-sm btn-outline-danger">Delete</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p class="text-muted mb-0 p-3">No interview questions added yet.</p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card p-4">
+      <h6 class="mb-3">Add Interview Question</h6>
+      <form method="POST">
+        <div class="mb-2">
+          <label class="form-label">Career</label>
+          <select name="career_id" class="form-select" required>
+            <option value="" disabled selected>Select career</option>
+            {% for c in careers %}<option value="{{ c.id }}">{{ c.name }}</option>{% endfor %}
+          </select>
+        </div>
+        <div class="mb-2"><label class="form-label">Question</label><textarea name="question" class="form-control" rows="2" required></textarea></div>
+        <div class="mb-3">
+          <label class="form-label">Expected Keywords (comma-separated)</label>
+          <input type="text" name="expected_keywords" class="form-control" placeholder="e.g. python, interpreted, language" required>
+        </div>
+        <button type="submit" class="btn btn-cr-primary w-100">Add Question</button>
+      </form>
+    </div>
+  </div>
+
+  {% for q in questions %}
+  <div class="modal fade" id="editQ{{ q.id }}" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form method="POST" action="{{ url_for('admin.edit_interview_question', question_id=q.id) }}">
+          <div class="modal-header"><h5 class="modal-title">Edit Question</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+          <div class="modal-body">
+            <div class="mb-2">
+              <label class="form-label">Career</label>
+              <select name="career_id" class="form-select" required>
+                {% for c in careers %}<option value="{{ c.id }}" {{ 'selected' if c.id == q.career_id }}>{{ c.name }}</option>{% endfor %}
+              </select>
+            </div>
+            <div class="mb-2"><label class="form-label">Question</label><textarea name="question" class="form-control" rows="2" required>{{ q.question }}</textarea></div>
+            <div class="mb-2"><label class="form-label">Expected Keywords</label><input type="text" name="expected_keywords" class="form-control" value="{{ q.expected_keywords }}" required></div>
+          </div>
+          <div class="modal-footer"><button type="submit" class="btn btn-cr-primary">Save Changes</button></div>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% endblock %}

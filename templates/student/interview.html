@@ -1,0 +1,23 @@
+{% extends "student/_layout.html" %}
+{% set active_page = 'interview' %}
+{% set page_title = 'Interview Practice' %}
+{% block content %}
+<div class="page-intro"><h4>Practice like it’s an interview</h4><p>Answer questions for your target role and get an instant keyword-based score.</p></div>
+<div class="callout mb-4"><i class="bi bi-info-circle me-1"></i><span class="small">This is a basic keyword-based evaluation. It is <strong>not an AI interview assessment</strong>.</span></div>
+
+{% if not questions %}
+<div class="card empty-state"><div class="empty-icon"><i class="bi bi-chat-square-text"></i></div><h6 class="fw-bold">No questions available yet</h6><p class="small mb-0">Interview questions for {{ career.name }} have not been added.</p></div>
+{% else %}
+<div class="card p-4 mb-4" style="background:linear-gradient(135deg,#faf9ff,#fff);border-color:#ddd9fb;">
+  <div class="d-flex justify-content-between align-items-center gap-3"><div><span class="section-kicker">{{ career.name }}</span><h5 class="fw-bold mt-1 mb-1">Interview Practice Set</h5><div class="small text-muted">{{ questions|length }} question{{ 's' if questions|length != 1 }} available</div></div>{% if latest_attempt %}<div class="text-end"><div class="stat-label">Latest score</div><div class="fs-3 fw-bold">{{ latest_attempt.score }}%</div></div>{% endif %}</div>
+</div>
+<div class="accordion" id="interviewAccordion">
+{% for q in questions %}
+<div class="accordion-item mb-3" style="border:1px solid var(--cr-border);border-radius:16px;overflow:hidden;box-shadow:var(--cr-shadow);">
+  <h2 class="accordion-header"><button class="accordion-button {{ 'collapsed' if not loop.first }} fw-semibold" type="button" data-bs-toggle="collapse" data-bs-target="#q{{ q.id }}"><span class="badge bg-light text-dark border me-3">Q{{ loop.index }}</span>{{ q.question }}</button></h2>
+  <div id="q{{ q.id }}" class="accordion-collapse collapse {{ 'show' if loop.first }}" data-bs-parent="#interviewAccordion"><div class="accordion-body p-4"><form method="POST" action="{{ url_for('interview.submit_answer', question_id=q.id) }}"><label class="form-label">Your answer</label><textarea name="answer" class="form-control mb-3" rows="5" placeholder="Type your answer in your own words..." required></textarea><button type="submit" class="btn btn-cr-primary">Submit Answer <i class="bi bi-arrow-right ms-1"></i></button></form></div></div>
+</div>
+{% endfor %}
+</div>
+{% endif %}
+{% endblock %}

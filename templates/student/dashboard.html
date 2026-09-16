@@ -1,0 +1,77 @@
+{% extends "student/_layout.html" %}
+{% set active_page = 'dashboard' %}
+{% set page_title = 'Dashboard' %}
+{% block content %}
+
+<div class="page-intro">
+  <h4>Welcome back, {{ current_user.name.split(' ')[0] }} 👋</h4>
+  <p>Here’s your current career preparation status.</p>
+</div>
+
+{% if not career %}
+<div class="dashboard-hero mb-4">
+  <div class="row align-items-center g-4">
+    <div class="col-lg-8">
+      <span class="section-kicker">Start your journey</span>
+      <h2 class="fw-bold mt-2 mb-2">Choose a career to discover your skill gap.</h2>
+      <p class="text-muted mb-4">CareerReady compares your current skills with the skills required for a target career and guides you toward useful resources.</p>
+      <a href="{{ url_for('student.careers') }}" class="btn btn-cr-primary"><i class="bi bi-compass me-1"></i> Choose a Career</a>
+    </div>
+    <div class="col-lg-4 text-center"><div class="empty-icon"><i class="bi bi-bullseye"></i></div><div class="fw-bold">Your readiness starts here</div><div class="text-muted small">Select a target role first.</div></div>
+  </div>
+</div>
+{% else %}
+<div class="dashboard-hero mb-4">
+  <div class="row align-items-center g-4">
+    <div class="col-lg-8">
+      <div class="d-flex align-items-center gap-2 mb-2"><span class="section-kicker">Target career</span><span class="readiness-level-badge level-{{ gap.readiness_level.replace(' ', '.') }}">{{ gap.readiness_level }}</span></div>
+      <h2 class="fw-bold mb-2">{{ career.name }}</h2>
+      <p class="text-muted mb-3">You have matched <strong>{{ gap.total_matched }}</strong> of <strong>{{ gap.total_required }}</strong> required skills. Focus on the remaining gaps to improve your readiness.</p>
+      <div class="progress mb-2"><div class="progress-bar bg-cr" style="width: {{ gap.readiness_percent }}%"></div></div>
+      <div class="small text-muted">{{ gap.readiness_percent }}% career readiness</div>
+    </div>
+    <div class="col-lg-4 d-flex justify-content-lg-end justify-content-center">
+      <div class="readiness-ring" style="--readiness: {{ gap.readiness_percent }};">
+        <div class="readiness-ring-content"><strong>{{ gap.readiness_percent }}%</strong><span>READY</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3"><div class="stat-card"><div class="d-flex justify-content-between"><div><div class="stat-label">Skills matched</div><div class="stat-value">{{ gap.total_matched }}/{{ gap.total_required }}</div></div><div class="stat-icon"><i class="bi bi-check2-circle"></i></div></div></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card"><div class="d-flex justify-content-between"><div><div class="stat-label">Skill gaps</div><div class="stat-value">{{ gap.missing|length }}</div></div><div class="stat-icon"><i class="bi bi-bullseye"></i></div></div></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card"><div class="d-flex justify-content-between"><div><div class="stat-label">Interview score</div><div class="stat-value">{{ latest_score if latest_score is not none else '—' }}{{ '%' if latest_score is not none }}</div></div><div class="stat-icon"><i class="bi bi-chat-square-text"></i></div></div></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card"><div class="d-flex justify-content-between"><div><div class="stat-label">Resources</div><div class="stat-value">{{ resource_count }}</div></div><div class="stat-icon"><i class="bi bi-book"></i></div></div></div></div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card p-4 h-100">
+      <div class="d-flex justify-content-between align-items-center mb-1"><h6 class="section-title mb-0">Your skill gap</h6><a href="{{ url_for('student.skill_gap') }}" class="small fw-semibold text-decoration-none">View analysis →</a></div>
+      <p class="section-subtitle mb-3">Skills you still need for {{ career.name }}.</p>
+      {% if gap.missing %}
+        {% for skill in gap.missing %}<span class="badge-skill missing"><i class="bi bi-x-circle"></i> {{ skill.name }}</span>{% endfor %}
+        <div class="callout mt-4"><div class="fw-semibold mb-1"><i class="bi bi-lightbulb me-1"></i> What next?</div><div class="small text-muted">Explore resources matched to these missing skills and start closing your gaps.</div><a href="{{ url_for('resources.resources') }}" class="btn btn-soft btn-sm mt-3">Explore resources</a></div>
+      {% else %}
+        <div class="empty-state p-4"><div class="empty-icon"><i class="bi bi-patch-check"></i></div><div class="fw-semibold">You’ve matched every required skill!</div></div>
+      {% endif %}
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="card p-4 mb-4">
+      <h6 class="section-title">Quick actions</h6>
+      <div class="d-grid gap-2">
+        <a href="{{ url_for('student.skills') }}" class="btn btn-light border text-start"><i class="bi bi-stars me-2"></i> Update my skills</a>
+        <a href="{{ url_for('resources.resources') }}" class="btn btn-light border text-start"><i class="bi bi-book me-2"></i> Find learning resources</a>
+        <a href="{{ url_for('interview.interview') }}" class="btn btn-cr-primary text-start"><i class="bi bi-chat-square-text me-2"></i> Practice interview</a>
+      </div>
+    </div>
+    <div class="card p-4">
+      <h6 class="section-title">Skills you already have</h6>
+      {% if gap.matched %}{% for skill in gap.matched %}<span class="badge-skill"><i class="bi bi-check-circle"></i> {{ skill.name }}</span>{% endfor %}{% else %}<p class="text-muted small mb-0">Add your current skills to see what matches your career.</p>{% endif %}
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}

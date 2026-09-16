@@ -1,0 +1,32 @@
+{% extends "admin/_layout.html" %}
+{% set active_page = 'students' %}
+{% set page_title = 'Students' %}
+{% block content %}
+
+<form method="GET" class="mb-3 d-flex gap-2" style="max-width: 400px;">
+  <input type="text" name="q" class="form-control" placeholder="Search students..." value="{{ search }}">
+  <button class="btn btn-cr-primary" type="submit"><i class="bi bi-search"></i></button>
+</form>
+
+<div class="card p-3">
+  {% if student_info %}
+  <table class="table align-middle">
+    <thead><tr><th>Name</th><th>Email</th><th>Career</th><th>Readiness</th><th></th></tr></thead>
+    <tbody>
+      {% for row in student_info %}
+      <tr>
+        <td>{{ row.user.name }}</td>
+        <td>{{ row.user.email }}</td>
+        <td>{{ row.career.name if row.career else '—' }}</td>
+        <td>{{ row.readiness }}%</td>
+        <td><a href="{{ url_for('admin.student_detail', user_id=row.user.id) }}" class="btn btn-sm btn-outline-primary">View</a></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p class="text-muted mb-0 p-3">No students found.</p>
+  {% endif %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "admin/_layout.html" %}
+{% set active_page = 'dashboard' %}
+{% set page_title = 'Admin Dashboard' %}
+{% block content %}
+<div class="page-intro"><h4>System overview</h4><p>Manage the career, skill, resource and interview data used by CareerReady.</p></div>
+<div class="row g-3 mb-4">
+  <div class="col-6 col-lg-3"><div class="stat-card admin-stat-accent"><div class="stat-label">Students</div><div class="stat-value">{{ stats.total_students }}</div></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-label">Careers</div><div class="stat-value">{{ stats.total_careers }}</div></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-label">Skills</div><div class="stat-value">{{ stats.total_skills }}</div></div></div>
+  <div class="col-6 col-lg-3"><div class="stat-card"><div class="stat-label">Resources</div><div class="stat-value">{{ stats.total_resources }}</div></div></div>
+</div>
+<div class="row g-4 mb-4"><div class="col-md-4"><div class="card p-4 h-100"><div class="stat-label">Verified resources</div><div class="fs-2 fw-bold mt-1">{{ stats.verified_resources }}</div><div class="small text-muted mt-1">{{ stats.active_resources }} active resources currently available.</div></div></div><div class="col-md-4"><div class="card p-4 h-100"><div class="stat-label">Interview questions</div><div class="fs-2 fw-bold mt-1">{{ stats.total_questions }}</div><div class="small text-muted mt-1">Questions available for career-specific practice.</div></div></div><div class="col-md-4"><div class="card p-4 h-100"><div class="stat-label">Content quality</div><div class="fs-2 fw-bold mt-1">{{ stats.verified_resources }} / {{ stats.total_resources }}</div><div class="small text-muted mt-1">Resources marked as verified.</div></div></div></div>
+<div class="card p-4"><div class="d-flex justify-content-between align-items-center mb-3"><div><h6 class="section-title mb-1">Recently registered students</h6><div class="section-subtitle">Latest student accounts in the system.</div></div><a href="{{ url_for('admin.students') }}" class="btn btn-soft btn-sm">View students</a></div>{% if recent_students %}<div class="table-responsive"><table class="table align-middle"><thead><tr><th>Name</th><th>Email</th><th>Joined</th></tr></thead><tbody>{% for s in recent_students %}<tr><td class="fw-semibold">{{ s.name }}</td><td>{{ s.email }}</td><td class="text-muted small">{{ s.created_at.strftime('%d %b %Y') }}</td></tr>{% endfor %}</tbody></table></div>{% else %}<div class="empty-state p-4"><div class="empty-icon"><i class="bi bi-people"></i></div><div class="fw-semibold">No students have registered yet.</div></div>{% endif %}</div>
+{% endblock %}

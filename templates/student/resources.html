@@ -1,0 +1,28 @@
+{% extends "student/_layout.html" %}
+{% set active_page = 'resources' %}
+{% set page_title = 'Learning Resources' %}
+{% block content %}
+<div class="page-intro"><h4>Learn what you’re missing</h4><p>Find real-world resources matched to your career and skill gaps.</p></div>
+
+<div class="dashboard-hero mb-4" style="background:linear-gradient(135deg,#4338ca,#7c3aed);color:#fff;border:0;">
+  <div class="row align-items-center g-4"><div class="col-lg-8"><span class="hero-badge mb-2"><i class="bi bi-stars"></i> Personalized learning</span><h2 class="fw-bold mb-2">Build the skills your career needs.</h2><p class="mb-0" style="color:rgba(255,255,255,.82);">{% if career %}Resources are prioritized around your {{ career.name }} skill gaps.{% else %}Choose a career to get personalized recommendations.{% endif %}</p></div><div class="col-lg-4"><div class="d-flex gap-4 justify-content-lg-end"><div><div class="fs-3 fw-bold">{{ gap.missing|length if gap else 0 }}</div><div class="small" style="color:rgba(255,255,255,.75);">Skill gaps</div></div><div><div class="fs-3 fw-bold">{{ recommended_count }}</div><div class="small" style="color:rgba(255,255,255,.75);">Recommendations</div></div></div></div></div>
+</div>
+
+{% if not career %}<div class="card empty-state"><div class="empty-icon"><i class="bi bi-compass"></i></div><h6 class="fw-bold">Choose a career first</h6><p class="small mb-3">Your resources will be personalized once you select a target career.</p><a href="{{ url_for('student.careers') }}" class="btn btn-cr-primary">Choose a Career</a></div>{% else %}
+<div class="d-flex justify-content-between align-items-end mb-3"><div><h6 class="section-title mb-1">Recommended for you</h6><div class="section-subtitle">Resources connected to your missing skills.</div></div></div>
+{% if recommended_by_skill %}{% for group in recommended_by_skill %}<div class="mb-4"><div class="fw-bold mb-2"><span class="badge-skill missing">{{ group.skill.name }}</span></div><div class="row g-3">{% for r in group.resources %}<div class="col-md-6 col-xl-4">{% include "student/_resource_card.html" %}</div>{% endfor %}</div></div>{% endfor %}{% else %}<div class="card p-4 mb-4"><div class="callout"><strong>No recommendations yet.</strong><div class="small text-muted mt-1">There are no active resources for your current missing skills.</div></div></div>{% endif %}
+{% endif %}
+
+<div class="card p-4 mt-4">
+  <div class="d-flex justify-content-between align-items-end mb-3"><div><h6 class="section-title mb-1">Explore all resources</h6><div class="section-subtitle">Search by skill, resource type or difficulty.</div></div><span class="badge bg-light text-dark border">{{ all_resources|length }} results</span></div>
+  <form method="GET" class="row g-2 mb-4">
+    <div class="col-12 col-lg-4"><div class="input-group"><span class="input-group-text bg-white border-end-0"><i class="bi bi-search"></i></span><input type="text" name="q" class="form-control border-start-0" placeholder="Search Python, Flask, Git..." value="{{ query_text }}"></div></div>
+    <div class="col-6 col-lg-2"><select name="skill" class="form-select"><option value="">All Skills</option>{% for s in all_skills %}<option value="{{ s.id }}" {{ 'selected' if skill_filter == s.id|string }}>{{ s.name }}</option>{% endfor %}</select></div>
+    <div class="col-6 col-lg-2"><select name="type" class="form-select"><option value="">All Types</option>{% for t in resource_types %}<option value="{{ t }}" {{ 'selected' if type_filter == t }}>{{ t }}</option>{% endfor %}</select></div>
+    <div class="col-6 col-lg-2"><select name="level" class="form-select"><option value="">All Levels</option>{% for l in levels %}<option value="{{ l }}" {{ 'selected' if level_filter == l }}>{{ l }}</option>{% endfor %}</select></div>
+    <div class="col-6 col-lg-2"><select name="sort" class="form-select"><option value="relevance" {{ 'selected' if sort_by == 'relevance' }}>Relevance</option><option value="beginner" {{ 'selected' if sort_by == 'beginner' }}>Beginner friendly</option><option value="shortest" {{ 'selected' if sort_by == 'shortest' }}>Shortest time</option><option value="verified" {{ 'selected' if sort_by == 'verified' }}>Verified first</option></select></div>
+    <div class="col-12"><button type="submit" class="btn btn-cr-primary btn-sm"><i class="bi bi-search"></i> Search</button><a href="{{ url_for('resources.resources') }}" class="btn btn-light border btn-sm ms-1">Clear</a></div>
+  </form>
+  {% if all_resources %}<div class="row g-3">{% for r in all_resources %}<div class="col-md-6 col-xl-4">{% include "student/_resource_card.html" %}</div>{% endfor %}</div>{% else %}<div class="empty-state p-4"><div class="empty-icon"><i class="bi bi-search"></i></div><div class="fw-semibold">No resources found</div><div class="small">Try changing your search or filters.</div></div>{% endif %}
+</div>
+{% endblock %}

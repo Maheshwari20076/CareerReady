@@ -1,0 +1,10 @@
+{% extends "student/_layout.html" %}
+{% set active_page = 'skills' %}
+{% set page_title = 'My Skills' %}
+{% block content %}
+<div class="page-intro"><h4>Manage your skills</h4><p>Add what you already know so CareerReady can calculate your skill gaps.</p></div>
+<div class="row g-4">
+  <div class="col-lg-7"><div class="card p-4 h-100"><div class="d-flex justify-content-between align-items-center mb-1"><h6 class="section-title mb-0">Skills you have</h6><span class="badge bg-light text-dark border">{{ my_skills|length }} added</span></div><div class="section-subtitle mb-3">These skills are included in your readiness calculation.</div>{% if my_skills %}{% for ss in my_skills %}<span class="badge-skill"><i class="bi bi-check-circle"></i>{{ ss.skill.name }}<form method="POST" action="{{ url_for('student.remove_skill', student_skill_id=ss.id) }}" class="d-inline"><button type="submit" class="btn btn-sm btn-link text-danger p-0 ms-1" title="Remove" onclick="return confirmDelete('Remove this skill?');"><i class="bi bi-x"></i></button></form></span>{% endfor %}{% else %}<div class="empty-state p-4"><div class="empty-icon"><i class="bi bi-stars"></i></div><div class="fw-semibold">No skills added yet</div><div class="small">Start with the skills you are comfortable using.</div></div>{% endif %}</div></div>
+  <div class="col-lg-5"><div class="card p-4"><h6 class="section-title">Add a skill</h6><p class="section-subtitle mb-3">Choose a skill you currently know.</p>{% if available_skills %}<form method="POST"><div class="mb-3"><select name="skill_id" class="form-select" required><option value="" disabled selected>Select a skill</option>{% for skill in available_skills %}<option value="{{ skill.id }}">{{ skill.name }}</option>{% endfor %}</select></div><button type="submit" class="btn btn-cr-primary w-100"><i class="bi bi-plus-lg me-1"></i> Add Skill</button></form>{% else %}<div class="callout small"><i class="bi bi-check-circle text-success me-1"></i>You’ve added every available skill.</div>{% endif %}</div></div>
+</div>
+{% endblock %}

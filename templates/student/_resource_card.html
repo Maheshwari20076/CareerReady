@@ -1,0 +1,12 @@
+<div class="resource-card d-flex flex-column">
+  <div class="d-flex justify-content-between align-items-start gap-2 mb-3">
+    <div class="resource-icon"><i class="bi bi-play-circle"></i></div>
+    {% if r.is_verified %}<span class="badge-verified"><i class="bi bi-patch-check-fill"></i> Verified</span>{% endif %}
+  </div>
+  <div class="small fw-semibold text-primary mb-1">{{ r.provider }}</div>
+  <h6 class="fw-bold mb-2">{{ r.title }}</h6>
+  <div class="mb-2"><span class="badge bg-light text-dark border me-1">{{ r.skill.name }}</span><span class="badge bg-light text-dark border me-1">{{ r.resource_type }}</span><span class="badge bg-light text-dark border">{{ r.level }}</span></div>
+  {% if r.description %}<p class="small text-muted mb-2">{{ r.description }}</p>{% endif %}
+  {% if r.estimated_time %}<p class="small text-muted mb-3"><i class="bi bi-clock me-1"></i>{{ r.estimated_time }}</p>{% endif %}
+  <a href="{{ r.url }}" target="_blank" rel="noopener noreferrer" class="btn btn-light border btn-sm mt-auto">Open Resource <i class="bi bi-box-arrow-up-right ms-1"></i></a>
+</div>

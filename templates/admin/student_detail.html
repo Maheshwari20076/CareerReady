@@ -1,0 +1,36 @@
+{% extends "admin/_layout.html" %}
+{% set active_page = 'students' %}
+{% set page_title = student.name %}
+{% block content %}
+
+<a href="{{ url_for('admin.students') }}" class="btn btn-outline-secondary btn-sm mb-3"><i class="bi bi-arrow-left"></i> Back to Students</a>
+
+<div class="row g-3">
+  <div class="col-md-4">
+    <div class="card p-4">
+      <h6 class="mb-3">Profile</h6>
+      <p class="mb-1"><strong>Email:</strong> {{ student.email }}</p>
+      <p class="mb-1"><strong>College:</strong> {{ student.profile.college if student.profile else '—' }}</p>
+      <p class="mb-1"><strong>Degree:</strong> {{ student.profile.degree if student.profile else '—' }}</p>
+      <p class="mb-1"><strong>Location:</strong> {{ student.profile.location if student.profile else '—' }}</p>
+      <p class="mb-0"><strong>Career:</strong> {{ career.name if career else 'Not selected' }}</p>
+    </div>
+  </div>
+  <div class="col-md-8">
+    <div class="card p-4 mb-3">
+      <h6 class="mb-2">Readiness</h6>
+      <div class="progress mb-2"><div class="progress-bar bg-cr" style="width: {{ gap.readiness_percent }}%"></div></div>
+      <div class="text-muted small">{{ gap.readiness_percent }}% &mdash; {{ gap.total_matched }}/{{ gap.total_required }} skills matched</div>
+    </div>
+    <div class="card p-4">
+      <h6 class="mb-2">Missing Skills</h6>
+      {% if gap.missing %}
+        {% for s in gap.missing %}<span class="badge-skill missing">{{ s.name }}</span>{% endfor %}
+      {% else %}
+        <p class="text-muted mb-0">No missing skills.</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}

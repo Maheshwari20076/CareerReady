@@ -1,0 +1,29 @@
+{% extends "student/_layout.html" %}
+{% set active_page = 'skill_gap' %}
+{% set page_title = 'Skill Gap Analysis' %}
+{% block content %}
+<div class="page-intro"><h4>Understand what you need next</h4><p>Compare your current skills with the requirements for <strong>{{ career.name }}</strong>.</p></div>
+
+<div class="dashboard-hero mb-4">
+  <div class="row align-items-center g-4">
+    <div class="col-md-8">
+      <span class="section-kicker">Career goal</span>
+      <h2 class="fw-bold mt-2 mb-1">{{ career.name }}</h2>
+      <p class="text-muted mb-3">{{ gap.total_matched }} of {{ gap.total_required }} required skills matched.</p>
+      <div class="progress mb-2"><div class="progress-bar bg-cr" style="width:{{ gap.readiness_percent }}%"></div></div>
+      <div class="d-flex justify-content-between small text-muted"><span>{{ gap.readiness_percent }}% ready</span><span>{{ gap.missing|length }} skill gaps</span></div>
+    </div>
+    <div class="col-md-4 d-flex justify-content-md-end justify-content-center"><div class="readiness-ring" style="--readiness: {{ gap.readiness_percent }};"><div class="readiness-ring-content"><strong>{{ gap.readiness_percent }}%</strong><span>{{ gap.readiness_level|upper }}</span></div></div></div>
+  </div>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-md-6"><div class="card p-4 h-100"><div class="d-flex align-items-center gap-2 mb-1"><div class="stat-icon"><i class="bi bi-check2"></i></div><div><h6 class="section-title mb-0">Skills you have</h6><div class="section-subtitle">Matched with this career</div></div></div><div class="mt-3">{% if gap.matched %}{% for skill in gap.matched %}<span class="badge-skill"><i class="bi bi-check-circle"></i> {{ skill.name }}</span>{% endfor %}{% else %}<p class="text-muted small mb-0">No matched skills yet.</p>{% endif %}</div></div></div>
+  <div class="col-md-6"><div class="card p-4 h-100"><div class="d-flex align-items-center gap-2 mb-1"><div class="stat-icon"><i class="bi bi-bullseye"></i></div><div><h6 class="section-title mb-0">Skills you need</h6><div class="section-subtitle">Focus on these next</div></div></div><div class="mt-3">{% if gap.missing %}{% for skill in gap.missing %}<span class="badge-skill missing"><i class="bi bi-x-circle"></i> {{ skill.name }}</span>{% endfor %}<a href="{{ url_for('resources.resources') }}" class="btn btn-cr-primary btn-sm mt-3">Find resources <i class="bi bi-arrow-right"></i></a>{% else %}<p class="text-muted small mb-0">You’re matched on every required skill.</p>{% endif %}</div></div></div>
+</div>
+
+<div class="card p-4">
+  <div class="d-flex justify-content-between align-items-center mb-3"><div><h6 class="section-title mb-0">Skill comparison</h6><div class="section-subtitle">A simple view of your current readiness.</div></div><span class="readiness-level-badge level-{{ gap.readiness_level.replace(' ', '.') }}">{{ gap.readiness_level }}</span></div>
+  <div class="table-responsive"><table class="table align-middle"><thead><tr><th>Skill</th><th>Status</th></tr></thead><tbody>{% for skill in gap.required %}<tr><td class="fw-semibold">{{ skill.name }}</td><td>{% if skill in gap.matched %}<span class="badge text-bg-success rounded-pill px-3">Matched</span>{% else %}<span class="badge text-bg-danger rounded-pill px-3">Missing</span>{% endif %}</td></tr>{% endfor %}</tbody></table></div>
+</div>
+{% endblock %}
