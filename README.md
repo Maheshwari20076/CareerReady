@@ -1,6 +1,7 @@
 # CareerReady
-### Student Career Readiness & Skill Gap Analysis System
-**BCA Final Year Project Documentation**
+# CareerReady – Student Career Readiness & Skill Gap Analysis System
+
+🌐 **Live Demo:** https://career-ready-kohl.vercel.app/
 
 ---
 
